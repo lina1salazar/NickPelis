@@ -1,5 +1,6 @@
-from flask  import  Blueprint
+from flask  import  Blueprint, jsonify
 from flask_restful import Api
+from marshmallow import ValidationError
 from api.resources.pelicula import PeliculasResource, PeliculaResource
 from api.resources.genero import GenerosResource, GeneroResource
 from api.resources.actor import ActoresResource, ActorResource
@@ -13,3 +14,7 @@ api.add_resource(GenerosResource, '/generos')
 api.add_resource(GeneroResource, '/generos/<int:genero_id>')
 api.add_resource(ActoresResource, '/actores')
 api.add_resource(ActorResource, '/actores/<int:actor_id>')
+
+@api_blueprint.errorhandler(ValidationError)
+def handle_marshmallow_error(e):
+    return jsonify(e.messages), 400
