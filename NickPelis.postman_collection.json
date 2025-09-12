@@ -1,0 +1,205 @@
+{
+  "info": {
+    "name": "NickPelis API",
+    "description": "Colección Postman para probar la API NickPelis (Películas, Géneros y Actores).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Películas",
+      "item": [
+        {
+          "name": "Listar todas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/peliculas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "peliculas"]
+            }
+          }
+        },
+        {
+          "name": "Listar destacadas",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas?destacadas=true"
+          }
+        },
+        {
+          "name": "Buscar por texto",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas?q=shrek"
+          }
+        },
+        {
+          "name": "Filtrar por año",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas?anio=1994"
+          }
+        },
+        {
+          "name": "Filtrar por género",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas?genero=Drama"
+          }
+        },
+        {
+          "name": "Obtener por ID",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas/1"
+          }
+        },
+        {
+          "name": "Crear película",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "nombre", "value": "Pelicula Demo", "type": "text" },
+                { "key": "anio", "value": "2025", "type": "text" },
+                { "key": "puntuacion", "value": "7.5", "type": "text" },
+                { "key": "duracion", "value": "120", "type": "text" },
+                { "key": "sinopsis", "value": "Una película de prueba.", "type": "text" },
+                { "key": "generos", "value": "10751", "type": "text" },
+                { "key": "actores", "value": "1", "type": "text" },
+                { "key": "poster", "type": "file" },
+                { "key": "banner", "type": "file" }
+              ]
+            },
+            "url": "http://localhost:5000/api/peliculas"
+          }
+        },
+        {
+          "name": "Actualizar película",
+          "request": {
+            "method": "PUT",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "nombre", "value": "Pelicula Demo Actualizada", "type": "text" },
+                { "key": "anio", "value": "2026", "type": "text" }
+              ]
+            },
+            "url": "http://localhost:5000/api/peliculas/1"
+          }
+        },
+        {
+          "name": "Eliminar película",
+          "request": {
+            "method": "DELETE",
+            "url": "http://localhost:5000/api/peliculas/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Géneros",
+      "item": [
+        {
+          "name": "Listar géneros",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/generos"
+          }
+        },
+        {
+          "name": "Obtener género por ID",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/generos/10751"
+          }
+        },
+        {
+          "name": "Crear género",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo Género\"\n}"
+            },
+            "url": "http://localhost:5000/api/generos"
+          }
+        },
+        {
+          "name": "Actualizar género",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Género Actualizado\"\n}"
+            },
+            "url": "http://localhost:5000/api/generos/10751"
+          }
+        },
+        {
+          "name": "Eliminar género",
+          "request": {
+            "method": "DELETE",
+            "url": "http://localhost:5000/api/generos/10751"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Actores",
+      "item": [
+        {
+          "name": "Listar actores",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/actores"
+          }
+        },
+        {
+          "name": "Obtener actor por ID",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/actores/1"
+          }
+        },
+        {
+          "name": "Crear actor",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo Actor\"\n}"
+            },
+            "url": "http://localhost:5000/api/actores"
+          }
+        },
+        {
+          "name": "Actualizar actor",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Actor Actualizado\"\n}"
+            },
+            "url": "http://localhost:5000/api/actores/1"
+          }
+        },
+        {
+          "name": "Eliminar actor",
+          "request": {
+            "method": "DELETE",
+            "url": "http://localhost:5000/api/actores/1"
+          }
+        }
+      ]
+    }
+  ]
+}
