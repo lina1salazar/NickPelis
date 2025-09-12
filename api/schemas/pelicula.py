@@ -1,10 +1,18 @@
+import os
 from marshmallow import ValidationError, validate, EXCLUDE, post_load, validates_schema
-from marshmallow.fields import Float, Int, Integer, List, String, Nested
+from marshmallow.fields import (
+    Float, Int, Integer, List,
+    String, Nested, Method, Pluck
+)
 from extensions import ma
 from models.peliculas import Pelicula, Genero, Actor
 from api.schemas.genero import GeneroSchema
 from api.schemas.actor import ActorSchema
+from config import Config
+from flask import url_for
 import re
+
+from utils.archivos import find_image
 
 
 def slugify(value: str) -> str:
@@ -80,8 +88,31 @@ class PeliculaSchema(ma.SQLAlchemyAutoSchema):
 class PeliculaDetalleSchema(ma.SQLAlchemyAutoSchema):
     generos = Nested(GeneroSchema, many=True, dump_only=True)
     actores = Nested(ActorSchema, many=True, dump_only=True)
+    poster_url = Method("get_poster_url", dump_only=True)
+    banner_url = Method("get_banner_url", dump_only=True)
 
     class Meta:
         model = Pelicula
         load_instance = False
         unknown = EXCLUDE
+
+    def get_poster_url(self, pelicula):
+        return find_image(pelicula.id_pelicula, "posters")
+
+    def get_banner_url(self, pelicula):
+        return find_image(pelicula.id_pelicula, "banners")
+    
+class PeliculaListaSchema(ma.SQLAlchemyAutoSchema):
+    poster_url = Method("get_poster_url", dump_only=True)
+    generos = Pluck(GeneroSchema, "nombre", many=True, dump_only=True)
+
+    class Meta:
+        model = Pelicula
+        load_instance = False
+        fields = ("id_pelicula", "nombre", "anio", "poster_url", "generos")
+        unknown = EXCLUDE
+
+
+
+    def get_poster_url(self, pelicula):
+        return find_image(pelicula.id_pelicula, "posters")

@@ -1,18 +1,19 @@
+import os
 from flask import jsonify, request
 from flask_restful import Resource
 from flask_restful import Resource
 from marshmallow import ValidationError
 from extensions import db
 
-from api.schemas.pelicula import PeliculaSchema, PeliculaDetalleSchema, slugify
+from api.schemas.pelicula import PeliculaSchema, PeliculaDetalleSchema, PeliculaListaSchema, slugify
 from models.peliculas import Pelicula, Genero, Actor
+from utils.archivos import delete_files, save_file, validate_file
 
   
 class PeliculasResource(Resource):
     def get(self):
         peliculas = Pelicula.query.all()
-        peliculas_schema = PeliculaSchema(many = True)
-        return jsonify(peliculas_schema.dump(peliculas))
+        return jsonify(PeliculaListaSchema(many = True).dump(peliculas))
     
     def post(self):
         pelicula_schema = PeliculaSchema()
@@ -29,21 +30,11 @@ class PeliculasResource(Resource):
         try:
             datos = pelicula_schema.load(form_data)
         except ValidationError  as err:
-            errors = err.messages
+            errors.update(err.messages)
 
-        print([poster, banner, errors])
-        if not poster or not banner:
-            errors["poster"] = ["Poster es requerido"]
-            errors["banner"] = ["Banner es requerido"]
-
+        # Validación de archivos
         for archivo, nombre in [(poster, "poster"), (banner, "banner")]:
-            if not archivo:
-                continue
-            if archivo.mimetype not in ["image/jpeg", "image/png"]:
-                errors[nombre] = ["Formato no soportado, solo se permite jpeg/png"]
-            if(len(archivo.read()) > 2 * 1024 * 1024): # 2MB
-                errors[nombre] = ["El archivo es muy grande (max 2MB)"]
-            archivo.seek(0)
+            errors.update(validate_file(archivo, nombre))
 
         if errors:
             return {"errors": errors}, 400
@@ -57,17 +48,15 @@ class PeliculasResource(Resource):
             slug = slugify(datos["nombre"]),
         )
 
-        if "generos" in request.json:
-            pelicula.generos = Genero.query.filter(
-                Genero.id_genero.in_(request.json["generos"])
-            ).all()
-        if "actores" in request.json:
-            pelicula.actores = Actor.query.filter(
-                Actor.id_actor.in_(request.json["actores"])
-            ).all()
-
+        pelicula.generos = Genero.query.filter(Genero.id_genero.in_(form_data["generos"])).all()
+        pelicula.actores = Actor.query.filter(Actor.id_actor.in_(form_data["actores"])).all()
+        
         db.session.add(pelicula)
         db.session.commit()
+
+        save_file(poster, "posters", pelicula.id_pelicula)
+        save_file(banner, "banners", pelicula.id_pelicula)
+
         return jsonify(msg='Pelicula Creada', pelicula=detalle_schema.dump(pelicula))
     
 class PeliculaResource(Resource):
@@ -79,6 +68,10 @@ class PeliculaResource(Resource):
 
     def delete(self, pelicula_id):
         pelicula = Pelicula.query.get_or_404(pelicula_id)
+
+        delete_files("posters", pelicula.id_pelicula)
+        delete_files("banners", pelicula.id_pelicula)
+
         db.session.delete(pelicula)
         db.session.commit()
         return jsonify(msg='Pelicula Eliminada')
@@ -88,11 +81,27 @@ class PeliculaResource(Resource):
         detalle_schema = PeliculaDetalleSchema()
         pelicula = Pelicula.query.get_or_404(pelicula_id)
 
+        form_data = request.form.to_dict()
+        form_data["generos"] = request.form.getlist("generos")
+        form_data["actores"] = request.form.getlist("actores")        
+
+        poster = request.files.get("poster")
+        banner = request.files.get("banner")
+
+        errors = {}
         try:
-            datos = pelicula_schema.load(request.json | {"id_pelicula": pelicula_id})
+            datos = pelicula_schema.load(form_data | {"id_pelicula": pelicula_id})
         except ValidationError  as err:
-            return {"errors": err.messages}, 400
+            errors.update(err.messages)
+
+        for archivo, nombre in [(poster, "poster"), (banner, "banner")]:
+            if not archivo:
+                errors.update(validate_file(archivo, nombre))
+
+        if errors:
+            return {"errors": errors}, 400
         
+        # actualizar atributos
         for campo in ["nombre", "anio", "puntuacion", "duracion", "sinopsis"]:
             if campo in datos:
                 setattr(pelicula, campo, datos[campo])
@@ -101,13 +110,15 @@ class PeliculaResource(Resource):
             pelicula.slug= slugify(datos["nombre"])
         
         if "generos" in datos:
-            pelicula.generos = Genero.query.filter(
-                Genero.id_genero.in_(datos["generos"])
-            ).all()
+            pelicula.generos = Genero.query.filter(Genero.id_genero.in_(datos["generos"])).all()
         if "actores" in datos:
-            pelicula.actores = Actor.query.filter(
-                Actor.id_actor.in_(datos["actores"])
-            ).all()   
+            pelicula.actores = Actor.query.filter(Actor.id_actor.in_(datos["actores"])).all()   
+
+        # actualizar imágenes si llegan nuevas
+        if poster:
+            save_file(poster, "posters", pelicula.id_pelicula)
+        if banner:
+            save_file(banner, "banners", pelicula.id_pelicula)
 
         db.session.commit()
         return jsonify(msg='Pelicula Actualizada',pelicula=detalle_schema.dump(pelicula))
