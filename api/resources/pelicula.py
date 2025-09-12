@@ -3,6 +3,7 @@ from flask import jsonify, request
 from flask_restful import Resource
 from flask_restful import Resource
 from marshmallow import ValidationError
+from sqlalchemy.orm import joinedload
 from extensions import db
 
 from api.schemas.pelicula import PeliculaSchema, PeliculaDetalleSchema, PeliculaListaSchema, slugify
@@ -12,9 +13,31 @@ from utils.archivos import delete_file, save_file, validate_file
   
 class PeliculasResource(Resource):
     def get(self):
-        destacadas = request.args.get("destacadas")
 
-        query = Pelicula.query
+        query = Pelicula.query.options(joinedload(Pelicula.generos))
+
+        # Búsqueda por texto
+        search = request.args.get("q")
+        if search:
+            like = f"%{search.lower()}%"
+            query = query.filter(
+                (Pelicula.nombre.ilike(like))
+            )
+
+        # filtro por año
+        anio = request.args.get("anio")
+        if anio and anio.isdigit():
+            query = query.filter(Pelicula.anio == int(anio))
+
+        # filtro por género (puede ser id o nombre)
+        genero = request.args.get("genero")
+        if genero:
+            if genero.isdigit():
+                query = query.join(Pelicula.generos).filter(Genero.id_genero == int(genero))
+            else:
+                query = query.join(Pelicula.generos).filter(Genero.nombre.ilike(genero))
+
+        destacadas = request.args.get("destacadas")
 
         if destacadas is not None:
             query = query.filter_by(destacada=True)
