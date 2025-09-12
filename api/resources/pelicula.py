@@ -7,13 +7,23 @@ from extensions import db
 
 from api.schemas.pelicula import PeliculaSchema, PeliculaDetalleSchema, PeliculaListaSchema, slugify
 from models.peliculas import Pelicula, Genero, Actor
-from utils.archivos import delete_files, save_file, validate_file
+from utils.archivos import delete_file, save_file, validate_file
 
   
 class PeliculasResource(Resource):
     def get(self):
-        peliculas = Pelicula.query.all()
-        return jsonify(PeliculaListaSchema(many = True).dump(peliculas))
+        destacadas = request.args.get("destacadas")
+
+        query = Pelicula.query
+
+        if destacadas is not None:
+            query = query.filter_by(destacada=True)
+            schema = PeliculaDetalleSchema(many=True)
+        else:
+            schema = PeliculaListaSchema(many=True)
+        
+        peliculas = query.all()
+        return jsonify(schema.dump(peliculas))
     
     def post(self):
         pelicula_schema = PeliculaSchema()
@@ -51,11 +61,12 @@ class PeliculasResource(Resource):
         pelicula.generos = Genero.query.filter(Genero.id_genero.in_(form_data["generos"])).all()
         pelicula.actores = Actor.query.filter(Actor.id_actor.in_(form_data["actores"])).all()
         
+        pelicula.poster = save_file(poster, "posters", pelicula.slug)
+        pelicula.banner = save_file(banner, "banners", pelicula.slug)
+        
         db.session.add(pelicula)
         db.session.commit()
 
-        save_file(poster, "posters", pelicula.id_pelicula)
-        save_file(banner, "banners", pelicula.id_pelicula)
 
         return jsonify(msg='Pelicula Creada', pelicula=detalle_schema.dump(pelicula))
     
@@ -69,8 +80,8 @@ class PeliculaResource(Resource):
     def delete(self, pelicula_id):
         pelicula = Pelicula.query.get_or_404(pelicula_id)
 
-        delete_files("posters", pelicula.id_pelicula)
-        delete_files("banners", pelicula.id_pelicula)
+        delete_file(pelicula.poster)
+        delete_file(pelicula.banner)
 
         db.session.delete(pelicula)
         db.session.commit()
@@ -116,9 +127,9 @@ class PeliculaResource(Resource):
 
         # actualizar imágenes si llegan nuevas
         if poster:
-            save_file(poster, "posters", pelicula.id_pelicula)
+            pelicula.poster = save_file(poster, "posters", pelicula.slug, old_file=pelicula.poster)
         if banner:
-            save_file(banner, "banners", pelicula.id_pelicula)
+            pelicula.banner = save_file(banner, "banners", pelicula.slug, old_file=pelicula.banner)
 
         db.session.commit()
         return jsonify(msg='Pelicula Actualizada',pelicula=detalle_schema.dump(pelicula))

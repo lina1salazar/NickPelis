@@ -5,16 +5,6 @@ from config import Config
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
 MAX_SIZE = 2 * 1024 * 1024  # 2MB
 
-
-def find_image(id_recurso, carpeta):
-    """Busca una imagen asociada al recurso y retorna la URL pública si existe."""
-    for ext in ALLOWED_EXTENSIONS:
-        path = os.path.join(Config.UPLOAD_FOLDER, carpeta, f"{id_recurso}.{ext}")
-        if os.path.exists(path):
-            return url_for("static", filename=f"img/{carpeta}/{id_recurso}.{ext}")
-    return None
-
-
 def validate_file(file, field_name):
     """Valida tipo y tamaño del archivo subido."""
     errors = {}
@@ -33,28 +23,45 @@ def validate_file(file, field_name):
     return errors
 
 
-def save_file(file, carpeta, filename_base):
-    """Guarda un archivo eliminando versiones anteriores con distinta extensión."""
+def save_file(file, carpeta, filename_base, old_file=None):
+    """
+    Guarda un archivo y retorna la ruta relativa.
+    Si old_file viene con valor → lo elimina antes de guardar el nuevo.
+    """
     folder_path = os.path.join(Config.UPLOAD_FOLDER, carpeta)
     os.makedirs(folder_path, exist_ok=True)
 
+    # borrar el viejo si existe
+    if old_file:
+        delete_file(old_file)
+
     ext = os.path.splitext(file.filename)[1].lower()
-    file_path = os.path.join(folder_path, f"{filename_base}{ext}")
+    relative_path = f"img/{carpeta}/{filename_base}{ext}"
+    full_path = os.path.join(Config.STATIC_FOLDER, relative_path)
 
-    # eliminar previas versiones
-    for old_ext in ALLOWED_EXTENSIONS:
-        old_path = os.path.join(folder_path, f"{filename_base}.{old_ext}")
-        if os.path.exists(old_path):
-            os.remove(old_path)
-
-    file.save(file_path)
-    return file_path
+    file.save(full_path)
+    return relative_path
 
 
-def delete_files(carpeta, filename_base):
-    """Elimina todos los archivos relacionados a un recurso (diferentes extensiones)."""
-    folder_path = os.path.join(Config.UPLOAD_FOLDER, carpeta)
-    for ext in ALLOWED_EXTENSIONS:
-        path = os.path.join(folder_path, f"{filename_base}.{ext}")
-        if os.path.exists(path):
-            os.remove(path)
+def delete_file(relative_path):
+    """Elimina un archivo usando la ruta relativa guardada en DB."""
+    if not relative_path:
+        return
+    full_path = os.path.join(Config.STATIC_FOLDER, relative_path)
+    if os.path.exists(full_path):
+        os.remove(full_path)
+
+def build_url(relative_path, default_path=None):
+    """
+    Convierte la ruta relativa en URL pública.
+    Si el archivo no existe, retorna la URL del default.
+    """
+    if relative_path:
+        full_path = os.path.join(Config.STATIC_FOLDER, relative_path)
+        if os.path.exists(full_path):
+            return url_for("static", filename=relative_path)
+
+    if default_path:
+        return url_for("static", filename=default_path)
+
+    return None

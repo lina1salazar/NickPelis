@@ -9,10 +9,9 @@ from models.peliculas import Pelicula, Genero, Actor
 from api.schemas.genero import GeneroSchema
 from api.schemas.actor import ActorSchema
 from config import Config
-from flask import url_for
 import re
 
-from utils.archivos import find_image
+from utils.archivos import build_url
 
 
 def slugify(value: str) -> str:
@@ -95,12 +94,13 @@ class PeliculaDetalleSchema(ma.SQLAlchemyAutoSchema):
         model = Pelicula
         load_instance = False
         unknown = EXCLUDE
+        exclude = ("poster", "banner")
 
     def get_poster_url(self, pelicula):
-        return find_image(pelicula.id_pelicula, "posters")
+        return build_url(pelicula.poster, default_path="img/posters/default.jpg")
 
     def get_banner_url(self, pelicula):
-        return find_image(pelicula.id_pelicula, "banners")
+        return build_url(pelicula.banner, default_path="img/banners/default.jpg")
     
 class PeliculaListaSchema(ma.SQLAlchemyAutoSchema):
     poster_url = Method("get_poster_url", dump_only=True)
@@ -115,4 +115,4 @@ class PeliculaListaSchema(ma.SQLAlchemyAutoSchema):
 
 
     def get_poster_url(self, pelicula):
-        return find_image(pelicula.id_pelicula, "posters")
+        return build_url(pelicula.poster, default_path="img/posters/default.jpg")

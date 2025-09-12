@@ -2,6 +2,7 @@ from flask import Flask
 from api.views import api_blueprint
 from config import Config
 from extensions import db
+from seed import llenar_datos_iniciales
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -13,7 +14,6 @@ db.init_app(app)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        llenar_datos_iniciales()
     app.run(debug=True)
-
-
-
+    

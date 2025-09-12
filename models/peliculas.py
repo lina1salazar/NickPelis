@@ -35,6 +35,9 @@ class Pelicula(db.Model):
     puntuacion: Mapped[float] = mapped_column(nullable=False)
     duracion: Mapped[int] = mapped_column(nullable=False)
     sinopsis: Mapped[str] = mapped_column(db.Text, nullable=False)
+    poster: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    banner: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    destacada: Mapped[bool] = mapped_column(db.Boolean, default=False)
     
     generos: Mapped[List["Genero"]] = relationship(
         "Genero",
