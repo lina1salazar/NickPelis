@@ -59,9 +59,9 @@ def build_url(relative_path, default_path=None):
     if relative_path:
         full_path = os.path.join(Config.STATIC_FOLDER, relative_path)
         if os.path.exists(full_path):
-            return url_for("static", filename=relative_path)
+            return url_for("static", filename=relative_path, _external=True)
 
     if default_path:
-        return url_for("static", filename=default_path)
+        return url_for("static", filename=default_path, _external=True)
 
     return None
