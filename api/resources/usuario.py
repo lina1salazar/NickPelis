@@ -20,7 +20,7 @@ class UsuariosResource(Resource):
 
     def post(self):
         try:
-            data = usuario_schema.load(request.get_json())
+            data = usuario_crear_schema.load(request.get_json())
         except ValidationError as err:
             return {"errors": err.messages}, 400
 
