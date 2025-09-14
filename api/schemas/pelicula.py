@@ -35,6 +35,7 @@ class PeliculaSchema(ma.SQLAlchemyAutoSchema):
         model = Pelicula
         load_instance = False
         unknown = EXCLUDE
+        exclude = ("poster", "banner")
 
     @post_load
     def make_slug(self, data, **kwargs):
@@ -116,3 +117,51 @@ class PeliculaListaSchema(ma.SQLAlchemyAutoSchema):
 
     def get_poster_url(self, pelicula):
         return build_url(pelicula.poster, default_path="img/posters/default.jpg")
+
+class PeliculaCrearSchema(PeliculaSchema):
+    nombre = String(required=True, validate=[validate.Length(min=5, max=150)])
+    anio = Integer(required=True)
+    puntuacion = Float(required=True)
+    duracion = Integer(required=True)
+    sinopsis = String(required=True, validate=[validate.Length(min=10)])
+
+    generos = List(
+        Int(),
+        required=True,
+        validate=[validate.Length(min=1)],
+        load_only=True
+    )
+    actores = List(
+        Int(),
+        required=True,
+        validate=[validate.Length(min=1)],
+        load_only=True
+    )
+
+class PeliculaActualizarSchema(PeliculaSchema):
+
+    nombre = String(required=False, validate=[validate.Length(min=5, max=150)])
+    anio = Integer(required=False)
+    puntuacion = Float(required=False)
+    duracion = Integer(required=False)
+    sinopsis = String(required=False, validate=[validate.Length(min=10)])
+
+    generos = List(Int(), required=False, load_only=True)
+    actores = List(Int(), required=False, load_only=True)
+
+    @validates_schema
+    def validate_unique_slug(self, data, **kwargs):
+        if "nombre" in data:
+            slug_value = slugify(data["nombre"])
+            existe = Pelicula.query.filter_by(slug=slug_value).first()
+            if existe:
+                if not data.get("id_pelicula"):
+                    raise ValidationError(
+                        f"Ya existe una película con el slug '{slug_value}'",
+                        field_name="slug"
+                    )
+                if existe.id_pelicula != data.get("id_pelicula"):
+                    raise ValidationError(
+                        f"Ya existe una película con el slug '{slug_value}'",
+                        field_name="slug"
+                    )

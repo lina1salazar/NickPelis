@@ -8,7 +8,10 @@ from sqlalchemy.orm import joinedload
 from auth.decorators import autorizacion_rol
 from extensions import db
 
-from api.schemas.pelicula import PeliculaSchema, PeliculaDetalleSchema, PeliculaListaSchema, slugify
+from api.schemas.pelicula import (
+    PeliculaDetalleSchema, PeliculaListaSchema,
+    PeliculaCrearSchema, PeliculaActualizarSchema,slugify
+)
 from models.peliculas import Pelicula, Genero, Actor
 from models.usuarios import UsuarioRol
 from utils.archivos import delete_file, save_file, validate_file
@@ -55,7 +58,7 @@ class PeliculasResource(Resource):
         return jsonify(schema.dump(peliculas))
     
     def post(self):
-        pelicula_schema = PeliculaSchema()
+        pelicula_schema = PeliculaCrearSchema()
         detalle_schema = PeliculaDetalleSchema()
 
         form_data = request.form.to_dict()
@@ -120,13 +123,15 @@ class PeliculaResource(Resource):
         return jsonify(msg='Pelicula Eliminada')
     
     def put(self, pelicula_id):
-        pelicula_schema = PeliculaSchema(partial=True)
+        pelicula_schema = PeliculaActualizarSchema(partial=True)
         detalle_schema = PeliculaDetalleSchema()
         pelicula = Pelicula.query.get_or_404(pelicula_id)
 
         form_data = request.form.to_dict()
-        form_data["generos"] = request.form.getlist("generos")
-        form_data["actores"] = request.form.getlist("actores")        
+        if "generos" in form_data:
+            form_data["generos"] = request.form.getlist("generos")
+        if "actores" in form_data:
+            form_data["actores"] = request.form.getlist("actores")        
 
         poster = request.files.get("poster")
         banner = request.files.get("banner")
@@ -138,7 +143,7 @@ class PeliculaResource(Resource):
             errors.update(err.messages)
 
         for archivo, nombre in [(poster, "poster"), (banner, "banner")]:
-            if not archivo:
+            if archivo:
                 errors.update(validate_file(archivo, nombre))
 
         if errors:
