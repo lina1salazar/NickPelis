@@ -17,7 +17,7 @@ def llenar_datos_iniciales():
         admin = Usuario(
             nombre="Administrador",
             correo=admin_email,
-            contrasena=pwd_context.hash(admin_password),
+            contrasena=admin_password,
             rol=UsuarioRol.ADMIN
         )
         db.session.add(admin)
