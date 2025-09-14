@@ -5,6 +5,7 @@ import enum
 from sqlalchemy import DateTime, Enum, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from extensions import db, pwd_context
+from utils.timezone import now_bogota
 
 class UsuarioRol(enum.StrEnum):
     USUARIO="usuario"
@@ -22,13 +23,20 @@ class Usuario(db.Model):
         default=UsuarioRol.USUARIO
     )
     fecha_registro: Mapped[datetime] = mapped_column(
-        DateTime, 
+        DateTime(timezone=True), 
         nullable=False,
-        default=datetime.utcnow
+        default=now_bogota
     )
 
     tokens: Mapped[list["ListaTokens"]] = relationship(
         "ListaTokens", back_populates="usuario", cascade="all, delete-orphan"
+    )
+
+    comentarios: Mapped[list["Comentario"]] = relationship(
+        "Comentario",
+        back_populates="usuario",
+        cascade="all, delete-orphan",
+        passive_deletes=True
     )
 
     @hybrid_property

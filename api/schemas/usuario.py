@@ -45,6 +45,9 @@ class UsuarioCrearSchema(UsuarioSchema):
         }
     )
 
+    class Meta(UsuarioSchema.Meta):
+        exclude = UsuarioSchema.Meta.exclude + ["rol"]
+
         
     
     

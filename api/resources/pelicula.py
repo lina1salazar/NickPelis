@@ -1,17 +1,23 @@
 import os
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import Resource
 from marshmallow import ValidationError
 from sqlalchemy.orm import joinedload
+from auth.decorators import autorizacion_rol
 from extensions import db
 
 from api.schemas.pelicula import PeliculaSchema, PeliculaDetalleSchema, PeliculaListaSchema, slugify
 from models.peliculas import Pelicula, Genero, Actor
+from models.usuarios import UsuarioRol
 from utils.archivos import delete_file, save_file, validate_file
 
   
 class PeliculasResource(Resource):
+    method_decorators={
+        "post":[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()]
+    }
     def get(self):
 
         query = Pelicula.query.options(joinedload(Pelicula.generos))
@@ -94,11 +100,14 @@ class PeliculasResource(Resource):
         return jsonify(msg='Pelicula Creada', pelicula=detalle_schema.dump(pelicula))
     
 class PeliculaResource(Resource):
+    method_decorators={
+        "put":[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()],
+        "delete":[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()]
+    }
     def get(self, pelicula_id):
         pelicula = Pelicula.query.get_or_404(pelicula_id)
         detalle_schema = PeliculaDetalleSchema()
         return jsonify(detalle_schema.dump(pelicula))
-
 
     def delete(self, pelicula_id):
         pelicula = Pelicula.query.get_or_404(pelicula_id)

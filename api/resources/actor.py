@@ -1,11 +1,15 @@
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
+from auth.decorators import autorizacion_rol
 from extensions import db
 
 from api.schemas.actor import ActorSchema
 from models.peliculas import Actor
+from models.usuarios import UsuarioRol
 
 class ActoresResource(Resource):
+    method_decorators=[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()]
     def get(self):
         actores= Actor.query.all()
         actores_schema= ActorSchema(many=True) 
@@ -18,9 +22,8 @@ class ActoresResource(Resource):
         db.session.commit()
         return jsonify(msg='Actor Creado', actor= actores_schema.dump(actor))
     
-    
 class ActorResource(Resource):
-    
+    method_decorators=[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()]
     def get(self, actor_id):
         actor= Actor.query.get_or_404(actor_id)
         actor_schema= ActorSchema()

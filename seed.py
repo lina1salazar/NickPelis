@@ -1,9 +1,32 @@
-from extensions import db
+from extensions import db, pwd_context
 from models.peliculas import Pelicula, Genero, Actor
+from models.usuarios import Usuario, UsuarioRol
+import os
 
 
 def llenar_datos_iniciales():
     """Carga datos iniciales solo si no existen registros en la DB."""
+
+
+    # 🔹 Variables de entorno para el admin
+    admin_email = os.getenv("ADMIN_EMAIL", "admin@nickpelis.com")
+    admin_password = os.getenv("ADMIN_PASSWORD", "Admin123*")
+
+    # 🔹 Crear usuario administrador por defecto
+    if db.session.query(Usuario).filter_by(correo=admin_email).count() == 0:
+        admin = Usuario(
+            nombre="Administrador",
+            correo=admin_email,
+            contrasena=pwd_context.hash(admin_password),
+            rol=UsuarioRol.ADMIN
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print(f"👑 Usuario administrador creado: {admin_email} / {admin_password}")
+    else:
+        print(f"ℹ️ Usuario administrador {admin_email} ya existe, no se creó uno nuevo.")
+
+
     if db.session.query(Genero).count() == 0:
         print("🌱 Ejecutando carga datos iniciales...")
 

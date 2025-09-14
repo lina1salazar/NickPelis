@@ -1,6 +1,9 @@
+from datetime import datetime
 from typing import List
+from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from extensions import db
+from utils.timezone import now_bogota
 
 
 class Genero(db.Model):
@@ -51,6 +54,13 @@ class Pelicula(db.Model):
         back_populates="peliculas",
         passive_deletes=True
     )
+
+    comentarios: Mapped[list["Comentario"]] = relationship(
+        "Comentario",
+        back_populates="pelicula",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
     
 
 class PeliculaGenero(db.Model):
@@ -70,3 +80,26 @@ class PeliculaActor(db.Model):
     id_actor: Mapped[int] = mapped_column(
         db.ForeignKey("actores.id_actor", ondelete="CASCADE"), primary_key=True
     )
+
+class Comentario(db.Model):
+    __tablename__ = "comentarios"
+    id_comentario: Mapped[int] = mapped_column(primary_key = True)
+    id_usuario: Mapped[int] = mapped_column(
+        db.ForeignKey("usuarios.id_usuario", ondelete="CASCADE"),
+        nullable= False
+    )
+    id_pelicula: Mapped[int] = mapped_column(
+        db.ForeignKey("peliculas.id_pelicula", ondelete="CASCADE"),
+        nullable= False
+    )
+    contenido: Mapped[str] = mapped_column(db.Text, nullable= False)
+    calificacion: Mapped[float] = mapped_column(nullable=False)
+    fecha_comentario: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), 
+        nullable=False,
+        default=now_bogota
+    )
+
+
+    usuario: Mapped["Usuario"] = relationship("Usuario", back_populates="comentarios")
+    pelicula: Mapped["Pelicula"] = relationship("Pelicula", back_populates="comentarios")

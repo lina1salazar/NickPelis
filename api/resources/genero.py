@@ -1,11 +1,15 @@
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
+from auth.decorators import autorizacion_rol
 from extensions import db 
 
 from api.schemas.genero import GeneroSchema
 from models.peliculas import Genero
+from models.usuarios import UsuarioRol
 
 class GenerosResource(Resource):
+    method_decorators=[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()]
     def get(self):
         generos = Genero.query.all()
         generos_schema = GeneroSchema(many = True)
@@ -19,6 +23,7 @@ class GenerosResource(Resource):
         return jsonify(msg='Genero Creado',genero=generos_schema.dump(genero))
     
 class GeneroResource(Resource):
+    method_decorators=[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()]
     def get(self, genero_id):
         genero = Genero.query.get_or_404(genero_id)
         genero_schema = GeneroSchema()

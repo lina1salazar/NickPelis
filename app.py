@@ -2,7 +2,7 @@ from flask import Flask
 from api.views import api_blueprint
 from auth.views import auth_blueprint
 from config import Config
-from extensions import db, cors
+from extensions import db, cors, jwt
 from seed import llenar_datos_iniciales
 from models.usuarios import Usuario
 
@@ -14,6 +14,7 @@ app.register_blueprint(auth_blueprint)
 
 db.init_app(app)
 cors.init_app(app, supports_credentials=True, origins="*")
+jwt.init_app(app)
 
 if __name__ == '__main__':
     with app.app_context():
