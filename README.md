@@ -170,7 +170,7 @@ El sistema usa **JWT (JSON Web Tokens)**.
 * **Cerrar sesión:**
 
   ```
-  POST /auth/logout
+  POST /auth/desconectar
   ```
 
 ### Roles

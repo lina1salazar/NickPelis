@@ -41,11 +41,11 @@
           }
         },
         {
-          "name": "Logout",
+          "name": "Desconectar",
           "request": {
             "method": "POST",
             "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
-            "url": "http://localhost:5000/auth/logout"
+            "url": "http://localhost:5000/auth/desconectar"
           }
         }
       ]
