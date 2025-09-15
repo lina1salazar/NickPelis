@@ -1,7 +1,7 @@
 from extensions import ma
 from marshmallow import validate
 from marshmallow.fields import (
-    Float, String, Integer, DateTime
+    Float, Pluck, String, Integer, DateTime
 )
 from models.peliculas import Comentario
 
@@ -13,6 +13,8 @@ class ComentarioSchema(ma.SQLAlchemyAutoSchema):
     id_usuario = Integer(dump_only=True)
     id_pelicula = Integer(dump_only=True)
     fecha_comentario = DateTime(dump_only=True)
+
+    usuario = Pluck("UsuarioSchema", "nombre", dump_only=True)
 
     class Meta:
         model = Comentario
