@@ -29,5 +29,5 @@ class Config:
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'supersecreto')
     JWT_TOKEN_LOCATION = ["headers", "cookies"]
     JWT_IDENTITY_CLAIM = "id_usuario" # default: sub
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
