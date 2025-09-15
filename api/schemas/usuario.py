@@ -20,9 +20,18 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     @validates_schema
     def validate_unique_correo(self,data, **kwargs):
         correo_value= data.get("correo")
-        if Usuario.query.filter_by(correo=correo_value).count():
+        id_usuario = data.get("id_usuario")
+        query = Usuario.query.filter_by(correo=correo_value)
+        if id_usuario:
+            if not correo_value:
+                return
+            query = query.filter(Usuario.id_usuario != id_usuario)
+
+        if query.first():
             raise ValidationError(
-                f"El correo {correo_value} ya esta registrado")
+                f"El correo {correo_value} ya esta registrado",
+                field_name="correo"
+            )
         
     class Meta: 
         model = Usuario

@@ -46,7 +46,7 @@ class UsuarioResource(Resource):
                 return {"msg": "No puedes quitarte tu propio rol de administrador"}, 400
 
         try:
-            data = usuario_schema.load(data, instance=usuario, partial=True)
+            data = usuario_schema.load(data | {"id_usuario": usuario_id}, instance=usuario, partial=True)
         except ValidationError as err:
             return {"errors": err.messages}, 400
 
