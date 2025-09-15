@@ -25,6 +25,7 @@ class Config:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     STATIC_FOLDER = os.path.join(BASE_DIR, "static")
     UPLOAD_FOLDER = os.path.join(STATIC_FOLDER, "img")
+    FRONTEND_FOLDER = os.path.join(BASE_DIR, "dist", "pagina-peliculas", "browser")
 
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'supersecreto')
     JWT_TOKEN_LOCATION = ["headers", "cookies"]
