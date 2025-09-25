@@ -7,6 +7,8 @@ from marshmallow import ValidationError
 from sqlalchemy.orm import joinedload
 from auth.decorators import autorizacion_rol
 from extensions import db
+from sqlalchemy import or_
+
 
 from api.schemas.pelicula import (
     PeliculaDetalleSchema, PeliculaListaSchema,
@@ -25,20 +27,29 @@ class PeliculasResource(Resource):
 
         query = Pelicula.query.options(joinedload(Pelicula.generos))
 
-        # Búsqueda por texto
+        # -------------------------
+        # 🔎 Búsqueda por texto
+        # -------------------------
         search = request.args.get("q")
         if search:
             like = f"%{search.lower()}%"
             query = query.filter(
-                (Pelicula.nombre.ilike(like))
+                or_(
+                    Pelicula.nombre.ilike(like),                   # busca en nombre
+                    Pelicula.sinopsis.ilike(like),                 # busca en sinopsis
+                    Pelicula.actores.any(Actor.nombre.ilike(like)) # busca en actores
+                )
             )
 
+        # -------------------------
+        # 🎞️ Filtros
+        # -------------------------
         # filtro por año
         anio = request.args.get("anio")
         if anio and anio.isdigit():
             query = query.filter(Pelicula.anio == int(anio))
 
-        # filtro por género (puede ser id o nombre)
+        # filtro por género (id o nombre)
         genero = request.args.get("genero")
         if genero:
             if genero.isdigit():
@@ -46,14 +57,46 @@ class PeliculasResource(Resource):
             else:
                 query = query.join(Pelicula.generos).filter(Genero.nombre.ilike(genero))
 
-        destacadas = request.args.get("destacadas")
+        # filtro por calificación/puntuación
+        puntuacion = request.args.get("puntuacion")
+        if puntuacion:
+            try:
+                query = query.filter(Pelicula.puntuacion >= float(puntuacion))
+            except ValueError:
+                pass  # si viene mal, lo ignoramos
 
+        # -------------------------
+        # ⭐ Filtro destacadas
+        # -------------------------
+        destacadas = request.args.get("destacadas")
         if destacadas is not None:
             query = query.filter_by(destacada=True)
             schema = PeliculaDetalleSchema(many=True)
         else:
             schema = PeliculaListaSchema(many=True)
-        
+
+            
+        # -------------------------
+        # 📌 Ordenamiento dinámico
+        # -------------------------
+        sort_field = request.args.get("sort", "anio")  # por defecto ordena por año
+        sort_order = request.args.get("order", "asc")  # ascendente
+
+        sort_options = {
+            "nombre": Pelicula.nombre,
+            "anio": Pelicula.anio,
+            "puntuacion": Pelicula.puntuacion
+        }
+
+        if sort_field in sort_options:
+            if sort_order == "desc":
+                query = query.order_by(sort_options[sort_field].desc())
+            else:
+                query = query.order_by(sort_options[sort_field].asc())
+
+        # -------------------------
+        # 📤 Resultado
+        # -------------------------
         peliculas = query.all()
         return jsonify(schema.dump(peliculas))
     
