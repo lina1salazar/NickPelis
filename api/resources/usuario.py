@@ -67,7 +67,7 @@ class UsuarioMeResource(Resource):
         return usuario_schema.dump(usuario), 200
 
     @jwt_required()
-    def put(self):
+    def patch(self):
         usuario = get_current_user()
         data = request.get_json() or {}
 
