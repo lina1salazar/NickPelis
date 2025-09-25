@@ -1,7 +1,7 @@
 from models.usuarios import Usuario, ListaTokens
 from models.peliculas import (
     Pelicula, Genero, Actor, PeliculaActor,
-    PeliculaGenero, Comentario
+    PeliculaGenero, Comentario, PeliculaFavorita,
 )
 
 __all__ = [
@@ -12,5 +12,6 @@ __all__ = [
     "Actor",
     "PeliculaActor",
     "PeliculaGenero",
-    "Comentario"
+    "Comentario",
+    "PeliculaFavorita"
 ]

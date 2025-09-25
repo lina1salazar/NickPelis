@@ -6,6 +6,7 @@ from api.resources.genero import GenerosResource, GeneroResource
 from api.resources.actor import ActoresResource, ActorResource
 from api.resources.comentario import ComentariosResource
 from api.resources.usuario import UsuariosResource, UsuarioResource, UsuarioMeResource
+from api.resources.favorita import FavoritaItemResource, FavoritaResource
 
 api_blueprint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(api_blueprint)
@@ -20,6 +21,9 @@ api.add_resource(ActorResource, '/actores/<int:actor_id>')
 api.add_resource(UsuariosResource, '/usuarios')
 api.add_resource(UsuarioMeResource, '/me')
 api.add_resource(UsuarioResource, '/usuarios/<int:usuario_id>')
+api.add_resource(FavoritaResource, '/favoritas')
+api.add_resource(FavoritaItemResource, '/favoritas/<int:pelicula_id>')
+
 
 
 @api_blueprint.errorhandler(ValidationError)

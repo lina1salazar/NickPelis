@@ -72,6 +72,16 @@ class PeliculaGenero(db.Model):
         db.ForeignKey("generos.id_genero", ondelete="CASCADE"), primary_key=True
     )
 
+class PeliculaFavorita(db.Model):
+    __tablename__ = "peliculas_favoritas"
+    id_pelicula: Mapped[int] = mapped_column(
+        db.ForeignKey("peliculas.id_pelicula", ondelete="CASCADE"), primary_key=True
+    )
+    id_usuario: Mapped[int] = mapped_column(
+        db.ForeignKey("usuarios.id_usuario", ondelete="CASCADE"), primary_key=True
+    )
+
+
 class PeliculaActor(db.Model):
     __tablename__ = "peliculas_actores"
     id_pelicula: Mapped[int] = mapped_column(

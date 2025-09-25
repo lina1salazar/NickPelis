@@ -39,6 +39,13 @@ class Usuario(db.Model):
         passive_deletes=True
     )
 
+    peliculas_favoritas: Mapped[list["Pelicula"]] = relationship(
+        "Pelicula",
+        secondary="peliculas_favoritas",
+        passive_deletes=True
+    )
+
+
     @hybrid_property
     def contrasena(self):
         return self._contrasena
