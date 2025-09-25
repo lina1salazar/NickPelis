@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from api.resources.pelicula import PeliculasResource, PeliculaResource
 from api.resources.genero import GenerosResource, GeneroResource
 from api.resources.actor import ActoresResource, ActorResource
-from api.resources.comentario import ComentariosResource
+from api.resources.comentario import ComentarioResource, ComentariosResource
 from api.resources.usuario import UsuariosResource, UsuarioResource, UsuarioMeResource
 from api.resources.favorita import FavoritaItemResource, FavoritaResource
 
@@ -14,6 +14,7 @@ api = Api(api_blueprint)
 api.add_resource(PeliculasResource, '/peliculas')
 api.add_resource(PeliculaResource, '/peliculas/<int:pelicula_id>')
 api.add_resource(ComentariosResource, '/peliculas/<int:pelicula_id>/comentarios')
+api.add_resource(ComentarioResource, '/comentarios/<int:comentario_id>')
 api.add_resource(GenerosResource, '/generos')
 api.add_resource(GeneroResource, '/generos/<int:genero_id>')
 api.add_resource(ActoresResource, '/actores')
