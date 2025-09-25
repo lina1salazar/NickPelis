@@ -12,7 +12,12 @@
           "name": "Registro usuario",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nombre\": \"Usuario Demo\",\n  \"correo\": \"demo@mail.com\",\n  \"contrasena\": \"Demo123*\"\n}"
@@ -24,7 +29,12 @@
           "name": "Iniciar sesión",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"correo\": \"admin@nickpelis.com\",\n  \"contrasena\": \"Admin123*\"\n}"
@@ -36,7 +46,12 @@
           "name": "Refrescar token",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{refresh_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{refresh_token}}"
+              }
+            ],
             "url": "http://localhost:5000/auth/refrescar"
           }
         },
@@ -44,7 +59,12 @@
           "name": "Desconectar",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/auth/desconectar"
           }
         }
@@ -55,37 +75,88 @@
       "item": [
         {
           "name": "Listar todas",
-          "request": { "method": "GET", "url": "http://localhost:5000/api/peliculas" }
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas"
+          }
         },
         {
           "name": "Listar destacadas",
-          "request": { "method": "GET", "url": "http://localhost:5000/api/peliculas?destacadas=true" }
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas?destacadas=true"
+          }
         },
         {
           "name": "Buscar por texto",
-          "request": { "method": "GET", "url": "http://localhost:5000/api/peliculas?q=shrek" }
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas?q=shrek"
+          }
         },
         {
           "name": "Obtener por ID",
-          "request": { "method": "GET", "url": "http://localhost:5000/api/peliculas/1" }
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas/1"
+          }
         },
         {
           "name": "Crear película",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "body": {
               "mode": "formdata",
               "formdata": [
-                { "key": "nombre", "value": "Pelicula Demo", "type": "text" },
-                { "key": "anio", "value": "2025", "type": "text" },
-                { "key": "puntuacion", "value": "7.5", "type": "text" },
-                { "key": "duracion", "value": "120", "type": "text" },
-                { "key": "sinopsis", "value": "Una película de prueba.", "type": "text" },
-                { "key": "generos", "value": "10751", "type": "text" },
-                { "key": "actores", "value": "1", "type": "text" },
-                { "key": "poster", "type": "file" },
-                { "key": "banner", "type": "file" }
+                {
+                  "key": "nombre",
+                  "value": "Pelicula Demo",
+                  "type": "text"
+                },
+                {
+                  "key": "anio",
+                  "value": "2025",
+                  "type": "text"
+                },
+                {
+                  "key": "puntuacion",
+                  "value": "7.5",
+                  "type": "text"
+                },
+                {
+                  "key": "duracion",
+                  "value": "120",
+                  "type": "text"
+                },
+                {
+                  "key": "sinopsis",
+                  "value": "Una película de prueba.",
+                  "type": "text"
+                },
+                {
+                  "key": "generos",
+                  "value": "10751",
+                  "type": "text"
+                },
+                {
+                  "key": "actores",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "poster",
+                  "type": "file"
+                },
+                {
+                  "key": "banner",
+                  "type": "file"
+                }
               ]
             },
             "url": "http://localhost:5000/api/peliculas"
@@ -95,12 +166,25 @@
           "name": "Actualizar película",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "body": {
               "mode": "formdata",
               "formdata": [
-                { "key": "nombre", "value": "Pelicula Demo Actualizada", "type": "text" },
-                { "key": "anio", "value": "2026", "type": "text" }
+                {
+                  "key": "nombre",
+                  "value": "Pelicula Demo Actualizada",
+                  "type": "text"
+                },
+                {
+                  "key": "anio",
+                  "value": "2026",
+                  "type": "text"
+                }
               ]
             },
             "url": "http://localhost:5000/api/peliculas/1"
@@ -110,7 +194,12 @@
           "name": "Eliminar película",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/peliculas/1"
           }
         }
@@ -121,18 +210,64 @@
       "item": [
         {
           "name": "Listar comentarios de película",
-          "request": { "method": "GET", "url": "http://localhost:5000/api/peliculas/1/comentarios" }
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:5000/api/peliculas/1/comentarios"
+          }
         },
         {
           "name": "Crear comentario",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"contenido\": \"Excelente película\",\n  \"calificacion\": 5\n}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contenido\": \"Excelente película\",\n  \"calificacion\": 5\n}"
+            },
             "url": "http://localhost:5000/api/peliculas/1/comentarios"
+          }
+        },
+        {
+          "name": "Actualizar comentario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"Comentario actualizado\"\n}"
+            },
+            "url": "http://localhost:5000/comentarios/1"
+          }
+        },
+        {
+          "name": "Eliminar comentario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "http://localhost:5000/comentarios/1"
           }
         }
       ]
@@ -144,7 +279,12 @@
           "name": "Listar géneros",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/generos"
           }
         },
@@ -152,7 +292,12 @@
           "name": "Obtener género por ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/generos/10751"
           }
         },
@@ -161,10 +306,19 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nuevo Género\"\n}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo Género\"\n}"
+            },
             "url": "http://localhost:5000/api/generos"
           }
         },
@@ -173,10 +327,19 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Género Actualizado\"\n}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Género Actualizado\"\n}"
+            },
             "url": "http://localhost:5000/api/generos/10751"
           }
         },
@@ -184,7 +347,12 @@
           "name": "Eliminar género",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/generos/10751"
           }
         }
@@ -197,7 +365,12 @@
           "name": "Listar actores",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/actores"
           }
         },
@@ -205,7 +378,12 @@
           "name": "Obtener actor por ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/actores/1"
           }
         },
@@ -214,10 +392,19 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nuevo Actor\"\n}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo Actor\"\n}"
+            },
             "url": "http://localhost:5000/api/actores"
           }
         },
@@ -226,10 +413,19 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Actor Actualizado\"\n}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Actor Actualizado\"\n}"
+            },
             "url": "http://localhost:5000/api/actores/1"
           }
         },
@@ -237,7 +433,12 @@
           "name": "Eliminar actor",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/actores/1"
           }
         }
@@ -250,7 +451,12 @@
           "name": "Listar usuarios (admin)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/usuarios"
           }
         },
@@ -259,10 +465,19 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nuevo Admin\",\n  \"correo\": \"nuevo@admin.com\",\n  \"contrasena\": \"Admin123*\",\n  \"rol\": \"ADMIN\"\n}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo Admin\",\n  \"correo\": \"nuevo@admin.com\",\n  \"contrasena\": \"Admin123*\",\n  \"rol\": \"ADMIN\"\n}"
+            },
             "url": "http://localhost:5000/api/usuarios"
           }
         },
@@ -270,27 +485,99 @@
           "name": "Ver mi perfil",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "url": "http://localhost:5000/api/me"
           }
         },
         {
           "name": "Actualizar mi perfil",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Usuario Actualizado\"\n}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Usuario Actualizado\"\n}"
+            },
             "url": "http://localhost:5000/api/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favoritos",
+      "item": [
+        {
+          "name": "Listar favoritos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "http://localhost:5000/favoritas"
+          }
+        },
+        {
+          "name": "Agregar favorito",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_pelicula\": 1\n}"
+            },
+            "url": "http://localhost:5000/favoritas"
+          }
+        },
+        {
+          "name": "Eliminar favorito",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "http://localhost:5000/favoritas/1"
           }
         }
       ]
     }
   ],
   "variable": [
-    { "key": "access_token", "value": "" },
-    { "key": "refresh_token", "value": "" }
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    }
   ]
 }

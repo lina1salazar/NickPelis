@@ -189,11 +189,16 @@ El sistema usa **JWT (JSON Web Tokens)**.
 * `POST /api/peliculas` (**solo admin**)
 * `PUT /api/peliculas/<id>` (**solo admin**)
 * `DELETE /api/peliculas/<id>` (**solo admin**)
+* `GET /favoritas` (**solo usuarios autenticados**)
+* `POST /favoritas` (**solo usuarios autenticados**)
+* `DELETE /favoritas/<id>` (**solo usuarios autenticados**)
 
 ### 📝 Comentarios
 
 * `GET /api/peliculas/<id>/comentarios` → listar comentarios de una película
 * `POST /api/peliculas/<id>/comentarios` (**solo usuarios autenticados**)
+* `PUT /comentarios/<id>` (**solo usuarios autenticados Autores o ADMIN**)
+* `DELETE /comentarios/<id>` (**solo usuarios autenticados Autores o ADMIN**)
 
 ### 🎭 Géneros
 
@@ -217,7 +222,7 @@ El sistema usa **JWT (JSON Web Tokens)**.
 * `PUT /api/usuarios/<id>` (**solo admin, con validación para no quitarse su propio rol admin**)
 * `DELETE /api/usuarios/<id>` (**solo admin**)
 * `GET /api/me` (**autenticado**) → ver perfil propio
-* `PUT /api/me` (**autenticado**) → actualizar perfil (no rol)
+* `PATCH /api/me` (**autenticado**) → actualizar perfil (no rol)
 
 ---
 
