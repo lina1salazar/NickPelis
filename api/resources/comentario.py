@@ -43,11 +43,12 @@ class ComentarioResource(Resource):
         comentario = Comentario.query.get(comentario_id)
         if not comentario:
             return {"error": "Comentario no encontrado"}, 404
-        if comentario.id_usuario != usuario.id_usuario and usuario.rol != "ADMIN":
+        if comentario.id_usuario != usuario.id_usuario and usuario.rol != "admin":
             return {"error": "No autorizado"}, 403
 
         data = request.get_json()
         comentario.contenido = data.get("contenido", comentario.contenido)
+        comentario.calificacion = data.get("calificacion", comentario.calificacion)
         db.session.commit()
         return {"message": "Comentario actualizado"}, 200
     
@@ -57,7 +58,7 @@ class ComentarioResource(Resource):
         comentario = Comentario.query.get(comentario_id)
         if not comentario:
             return {"error": "Comentario no encontrado"}, 404
-        if comentario.id_usuario != usuario.id_usuario and usuario.rol != "ADMIN":
+        if comentario.id_usuario != usuario.id_usuario and usuario.rol != "admin":
             return {"error": "No autorizado"}, 403
         db.session.delete(comentario)
         db.session.commit()
