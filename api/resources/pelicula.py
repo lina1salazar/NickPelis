@@ -2,7 +2,6 @@ import os
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from flask_restful import Resource
 from marshmallow import ValidationError
 from sqlalchemy.orm import joinedload
 from auth.decorators import autorizacion_rol
@@ -20,36 +19,35 @@ from utils.archivos import delete_file, save_file, validate_file
 
   
 class PeliculasResource(Resource):
-    method_decorators={
-        "post":[autorizacion_rol(UsuarioRol.ADMIN),jwt_required()]
+    method_decorators = {
+        "post": [autorizacion_rol(UsuarioRol.ADMIN), jwt_required()]
     }
+
     def get(self):
+        query = Pelicula.query.options(
+            joinedload(Pelicula.generos),
+            joinedload(Pelicula.actores)
+        )
 
-        query = Pelicula.query.options(joinedload(Pelicula.generos))
-
-        # -------------------------
-        # 🔎 Búsqueda por texto
-        # -------------------------
+        
+        # Búsqueda por texto
         search = request.args.get("q")
         if search:
             like = f"%{search.lower()}%"
             query = query.filter(
                 or_(
-                    Pelicula.nombre.ilike(like),                   # busca en nombre
-                    Pelicula.sinopsis.ilike(like),                 # busca en sinopsis
-                    Pelicula.actores.any(Actor.nombre.ilike(like)) # busca en actores
+                    Pelicula.nombre.ilike(like),
+                    Pelicula.sinopsis.ilike(like),
+                    Pelicula.actores.any(Actor.nombre.ilike(like))
                 )
             )
 
-        # -------------------------
-        # 🎞️ Filtros
-        # -------------------------
-        # filtro por año
+        
+        # Filtros
         anio = request.args.get("anio")
         if anio and anio.isdigit():
             query = query.filter(Pelicula.anio == int(anio))
 
-        # filtro por género (id o nombre)
         genero = request.args.get("genero")
         if genero:
             if genero.isdigit():
@@ -57,17 +55,14 @@ class PeliculasResource(Resource):
             else:
                 query = query.join(Pelicula.generos).filter(Genero.nombre.ilike(genero))
 
-        # filtro por calificación/puntuación
         puntuacion = request.args.get("puntuacion")
         if puntuacion:
             try:
                 query = query.filter(Pelicula.puntuacion >= float(puntuacion))
             except ValueError:
-                pass  # si viene mal, lo ignoramos
+                pass
 
-        # -------------------------
-        # ⭐ Filtro destacadas
-        # -------------------------
+        # destacadas
         destacadas = request.args.get("destacadas")
         if destacadas is not None:
             query = query.filter_by(destacada=True)
@@ -75,12 +70,10 @@ class PeliculasResource(Resource):
         else:
             schema = PeliculaListaSchema(many=True)
 
-            
-        # -------------------------
-        # 📌 Ordenamiento dinámico
-        # -------------------------
-        sort_field = request.args.get("sort", "anio")  # por defecto ordena por año
-        sort_order = request.args.get("order", "asc")  # ascendente
+        
+        # Ordenamiento dinámico
+        sort_field = request.args.get("sort", "anio")
+        sort_order = request.args.get("order", "asc")
 
         sort_options = {
             "nombre": Pelicula.nombre,
@@ -94,11 +87,21 @@ class PeliculasResource(Resource):
             else:
                 query = query.order_by(sort_options[sort_field].asc())
 
-        # -------------------------
-        # 📤 Resultado
-        # -------------------------
-        peliculas = query.all()
-        return jsonify(schema.dump(peliculas))
+        
+        # Paginación
+        page = request.args.get("page", 1, type=int)
+        per_page = request.args.get("per_page", 5, type=int)
+
+        paginacion = query.paginate(page=page, per_page=per_page, error_out=False)
+
+        return jsonify({
+            "total": paginacion.total,
+            "pages": paginacion.pages,
+            "current_page": paginacion.page,
+            "per_page": paginacion.per_page,
+            "peliculas": schema.dump(paginacion.items)
+        })
+
     
     def post(self):
         pelicula_schema = PeliculaCrearSchema()
