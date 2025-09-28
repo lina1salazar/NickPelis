@@ -153,7 +153,7 @@
               "mode": "raw",
               "raw": "{\n  \"contenido\": \"Comentario actualizado\"\n}"
             },
-            "url": "http://localhost:5000/comentarios/1"
+            "url": "http://localhost:5000/api/comentarios/1"
           }
         },
         {
@@ -166,7 +166,7 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "http://localhost:5000/comentarios/1"
+            "url": "http://localhost:5000/api/comentarios/1"
           }
         }
       ]
@@ -335,7 +335,7 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "http://localhost:5000/favoritas"
+            "url": "http://localhost:5000/api/favoritas"
           }
         },
         {
@@ -356,7 +356,7 @@
               "mode": "raw",
               "raw": "{\n  \"id_pelicula\": 1\n}"
             },
-            "url": "http://localhost:5000/favoritas"
+            "url": "http://localhost:5000/api/favoritas"
           }
         },
         {
@@ -369,7 +369,7 @@
                 "value": "Bearer {{access_token}}"
               }
             ],
-            "url": "http://localhost:5000/favoritas/1"
+            "url": "http://localhost:5000/api/favoritas/1"
           }
         }
       ]
